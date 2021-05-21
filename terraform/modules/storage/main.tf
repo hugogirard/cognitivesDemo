@@ -7,7 +7,7 @@ resource "azurerm_storage_account" "str" {
 }
 
 resource "azurerm_storage_container" "cnt" {
-    name                        = "cv"
+    name                        = "resume"
     storage_account_name        = azurerm_storage_account.str.name
     container_access_type       = "private"
 }
