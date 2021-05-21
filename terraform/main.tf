@@ -9,3 +9,10 @@ module "storage" {
     location    = var.location
     rgName      = azurerm_resource_group.rg.name
 }
+
+module "search" {
+    source          = "./modules/cognitive"
+    location        = var.location
+    rgName          = azurerm_resource_group.rg.name
+    searchName      = var.searchName
+}

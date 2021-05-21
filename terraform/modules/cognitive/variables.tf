@@ -1,9 +1,11 @@
+variable "searchName" {
+  type = string
+}
+
 variable "location" {
-  type    = string  
-  default = "eastus"
+  type = string  
 }
 
 variable "rgName" {
   type = string
-  default = "knowledge-mining-demo-rg"
 }

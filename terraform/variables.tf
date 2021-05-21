@@ -27,3 +27,7 @@ variable "rgName" {
   type = string
   default = "knowledge-mining-demo-rg"
 }
+
+variable "searchName" {
+  type = string  
+}
