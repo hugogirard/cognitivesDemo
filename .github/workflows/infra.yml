@@ -1,0 +1,47 @@
+name: Deploy Azure Resources
+
+on:
+  push:
+    branches:
+      - "main"
+
+  workflow_dispatch:
+
+env:
+  LOCATION: eastus
+  RG_NAME: 'knowledge-mining-demo-rg'
+
+jobs:
+  deploy_azure_resources:
+    runs-on: ubuntu-latest
+  
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: Azure/login@v1.1
+        with:          
+          creds: ${{ secrets.SP_AZURE_CREDENTIALS }}          
+          enable-AzPSSession: false
+      
+      - name: Bicep Build
+        uses: aliencube/bicep-build-actions@v0.1
+        with:
+          files: bicep/main.bicep
+
+      # Create resource group
+      - name: Create Resource Group
+        run: |
+         az group create -n ${{ env.RG_NAME }} -l ${{ env.LOCATION }}       
+
+      - name: Deploy APIM Resources
+        id: deployapim
+        uses: Azure/arm-deploy@v1.0.1
+        with:        
+          scope: resourcegroup          
+          subscriptionId: ${{ secrets.SUBSCRIPTION_ID }}          
+          region: ${{ env.LOCATION }}        
+          resourceGroupName: ${{ env.RG_NAME }}        
+          template: bicep/main.json
+          parameters: location=${{ env.LOCATION }}        
+          deploymentMode: Incremental              
