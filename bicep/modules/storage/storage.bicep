@@ -18,5 +18,5 @@ resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@20
   name: '${str.name}/default/${containerName}'
 }
 
-output strCnxString string = listkey(str.id,'2019-04-01').keys[0].value
+output strCnxString string = listKeys(str.id,'2019-04-01').keys[0].value
 output containerName string = containerName
