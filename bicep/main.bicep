@@ -9,3 +9,11 @@ module str 'modules/storage/storage.bicep' = {
     suffix: suffix
   }
 }
+
+module cognitive 'modules/cognitive/cognitive.bicep' = {
+  name: 'cognitives'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
