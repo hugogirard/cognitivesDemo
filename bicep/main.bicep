@@ -17,3 +17,6 @@ module cognitive 'modules/cognitive/cognitive.bicep' = {
     suffix: suffix
   }
 }
+
+output strCnxString string = str.outputs.strCnxString
+output containerName string = str.outputs.containerName
