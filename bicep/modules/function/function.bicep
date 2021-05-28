@@ -70,6 +70,14 @@ resource func 'Microsoft.Web/sites@2018-11-01' = {
           name: 'AzureWebJobsStorage'
           value: 'DefaultEndpointsProtocol=https;AccountName=${strName};AccountKey=${strKey};EndpointSuffix=core.windows.net'
         }
+        {
+          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${strName};AccountKey=${strKey};EndpointSuffix=core.windows.net'
+        }
+        {
+          name: 'WEBSITE_CONTENTSHARE'
+          value: 'func-${suffix}858a'
+        }        
       ]
     }
     serverFarmId: plan.id    
