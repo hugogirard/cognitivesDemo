@@ -5,7 +5,7 @@ param strKey string
 
 var planName = 'plan-func-${suffix}'
 var funcName = 'func-${suffix}'
-var workspaceName = 'work-${suffix}'
+var workspaceName = 'work${suffix}'
 var appInsightName = 'func-insight-${suffix}'
 
 resource workspace 'Microsoft.OperationalInsights/workspaces@2017-03-15-preview' = {
