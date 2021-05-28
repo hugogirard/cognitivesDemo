@@ -8,19 +8,21 @@ var funcName = 'func-${suffix}'
 var workspaceName = 'work${suffix}'
 var appInsightName = 'func-insight-${suffix}'
 
-resource workspace 'Microsoft.OperationalInsights/workspaces@2017-03-15-preview' = {
+resource workspace 'Microsoft.OperationalInsights/workspaces@2020-03-01-preview' = {
   name: workspaceName
   location: location
-  properties: {    
+  properties: any({    
+    retentionInDays: 30
     sku: {
-      name: 'pergb2018'
+      name: 'PerGB2018'
     }
-  }
+  })
 }
 
 resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
   name: appInsightName
   location: location
+  kind: 'web'
   properties: {
     Application_Type: 'web'
     WorkspaceResourceId: workspace.id
