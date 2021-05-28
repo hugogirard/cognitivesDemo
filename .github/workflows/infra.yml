@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - "main"
+    paths:
+      - "bicep/*"
 
   workflow_dispatch:
 
@@ -45,10 +47,3 @@ jobs:
           template: bicep/main.json
           parameters: location=${{ env.LOCATION }}        
           deploymentMode: Incremental
-
-      - uses: bacongobbler/azure-blob-storage-upload@v1.2.0
-        with:
-          source_dir: resume
-          container_name: ${{ steps.deploy.outputs.containerName }}
-          connection_string: ${{ steps.deploy.outputs.strCnxString }}
-          sync: false          

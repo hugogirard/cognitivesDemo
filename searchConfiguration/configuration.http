@@ -1,0 +1,180 @@
+### Change for the name of your search service
+@searchServiceName = <searchServiceName>
+
+### Change for the api key of the search service
+@apiKey= <apiKey>
+
+### Storage connection string
+@cnxStringStorage = <connectionString>
+
+POST https://{{searchServiceName}}.search.windows.net/datasources?api-version=2020-06-30
+Content-Type: application/json
+api-key: {{apiKey}}
+
+{
+    "name" : "resumesource",  
+    "description" : "Azure Storage with all resume.",  
+    "type" : "azureblob",
+    "credentials" :
+    { "connectionString" :
+      "{{cnxStringStorage}}"
+    },  
+    "container" : { "name" : "resume" }    
+}
+
+PUT https://search-ih5nmzpzmdfxy.search.windows.net/skillsets/resumeskillset?api-version=2020-06-30
+Content-Type: application/json
+api-key: AE27C769D5A3A0AA6C866AFC9967F9DA
+
+{
+    "name" : "resumeskillset",
+    "description" : "Skillset to analyze the resume",   
+    "skills": [
+        {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "description": "Recognize entity location and organization",
+            "context": "/document/content",
+            "minimumPrecision": "0.8",
+            "categories": [
+                "Organization",
+                "Location"
+            ],
+            "defaultLanguageCode": "en",
+            "inputs": [
+                {
+                    "name": "text",
+                    "source": "/document/content"
+                },
+                {
+                    "name": "languageCode",
+                    "source": "/document/language"
+                }                
+            ],
+            "outputs": [
+                {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                },
+                {
+                    "name": "locations",
+                    "targetName": "locations"
+                }           
+            ]
+        }
+    ]
+}
+
+
+PUT https://search-ih5nmzpzmdfxy.search.windows.net/indexes/resumeindex?api-version=2020-06-30
+Content-Type: application/json
+api-key: AE27C769D5A3A0AA6C866AFC9967F9DA
+
+{
+  "fields": [
+    {
+      "name": "metadata_storage_path",
+      "type": "Edm.String",
+      "key": true,
+      "searchable": false,
+      "filterable": false,
+      "facetable": false,
+      "sortable": false,
+      "retrievable": true
+    },
+    {
+      "name": "content",
+      "type": "Edm.String",
+      "sortable": false,
+      "searchable": true,
+      "filterable": false,
+      "facetable": false,
+      "analyzer": "standard.lucene",      
+      "retrievable": true
+    },   
+    {
+      "name": "metadata_title",
+      "type": "Edm.String",
+      "sortable": false,
+      "filterable": false,
+      "facetable": false,
+      "searchable": false,
+      "retrievable": true
+    },             
+    {
+      "name": "organizations",
+      "type": "Collection(Edm.String)",
+      "searchable": true,
+      "filterable": true,
+      "facetable": true,
+      "retrievable": true,
+      "analyzer": "standard.lucene"
+    },
+    {
+      "name": "locations",
+      "type": "Collection(Edm.String)",
+      "searchable": true,
+      "filterable": true,
+      "facetable": true,
+      "retrievable": true,
+      "analyzer": "standard.lucene"
+    },    
+    {
+      "name": "language",
+      "type": "Edm.String",
+      "facetable": false,
+      "filterable": true,
+      "key": false,
+      "retrievable": true,
+      "searchable": true,
+      "sortable": false,
+      "analyzer": "standard.lucene"
+    },
+    {
+      "name": "metadata_creation_date",
+      "type": "Edm.DateTimeOffset",
+      "facetable": false,
+      "filterable": true,
+      "retrievable": true,
+      "sortable": false,      
+      "searchable": false
+    }    
+  ]
+}
+
+PUT https://search-ih5nmzpzmdfxy.search.windows.net/indexers/resumerindexer?api-version=2020-06-30
+Content-Type: application/json
+api-key: AE27C769D5A3A0AA6C866AFC9967F9DA
+
+{
+  "dataSourceName" : "resumesource",
+  "targetIndexName" : "resumeindex",
+  "skillsetName" : "resumeskillset",
+  "fieldMappings" : [
+        {
+          "sourceFieldName" : "metadata_storage_path",
+          "targetFieldName" : "metadata_storage_path",
+          "mappingFunction" :
+            { "name" : "base64Encode" }
+        }
+   ],
+  "outputFieldMappings" :
+  [
+      {
+        "sourceFieldName": "/document/content/organizations",
+        "targetFieldName": "organizations"
+      },
+      {
+        "sourceFieldName": "/document/content/locations",
+        "targetFieldName": "locations"
+      },
+      {
+        "sourceFieldName": "/document/language",
+        "targetFieldName": "language"
+      }
+  ],
+  "parameters":
+  {
+    "maxFailedItems":-1,
+    "maxFailedItemsPerBatch":-1
+  }
+}
