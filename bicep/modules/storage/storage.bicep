@@ -4,8 +4,8 @@ param suffix string
 var name = 'str${suffix}'
 var nameStrFunc = 'strf${suffix}'
 var containerName = 'resume'
-var containerFrName = 'resume_fr'
-var containerEnglish = 'resume_eng'
+var containerFrName = 'resumefr'
+var containerEnglish = 'resumeeng'
 
 resource str 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: name
