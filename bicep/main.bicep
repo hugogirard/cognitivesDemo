@@ -18,5 +18,15 @@ module cognitive 'modules/cognitive/cognitive.bicep' = {
   }
 }
 
+module function 'modules/function/function.bicep' = {
+  name: 'function'
+  params: {
+    location: location
+    suffix: suffix
+    strKey: str.outputs.strCnsStringFunc
+    strName: str.outputs.strFuncName
+  }
+}
+
 output strCnxString string = str.outputs.strCnxString
 output containerName string = str.outputs.containerName

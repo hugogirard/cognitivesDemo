@@ -41,3 +41,6 @@ resource containerEng 'Microsoft.Storage/storageAccounts/blobServices/containers
 
 output strCnxString string = listKeys(str.id,'2019-04-01').keys[0].value
 output containerName string = containerName
+
+output strCnsStringFunc string = listKeys(strFunction.id,'2019-04-01').keys[0].value
+output strFuncName string = nameStrFunc
