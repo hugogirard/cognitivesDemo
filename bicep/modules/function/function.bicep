@@ -29,28 +29,35 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02-preview' = {
   }  
 }
 
-resource plan 'Microsoft.Web/serverfarms@2018-11-01' = {
+resource plan 'Microsoft.Web/serverfarms@2020-06-01' = {
   name: planName
   location: location
+  sku: {
+    name: 'EP1'
+    tier: 'ElasticPremium'
+  }
+  kind: 'elastic'
   properties: {
-    name: planName
-    workerSize: 3
-    workerSizeId: 3
-    numberOfWorkers: 1
     maximumElasticWorkerCount: 20
   }
-  sku: {
-    Tier: 'ElasticPremium'
-    Name: 'EP1'
-  }
 }
+
 
 resource func 'Microsoft.Web/sites@2018-11-01' = {
   name: funcName
   location: location
+  kind: 'functionapp'
   properties: {
     siteConfig: {
       appSettings: [
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsights.properties.InstrumentationKey
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: 'InstrumentationKey=${appInsights.properties.InstrumentationKey}'
+        }        
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
           value: '~3'
@@ -62,14 +69,6 @@ resource func 'Microsoft.Web/sites@2018-11-01' = {
         {
           name: 'AzureWebJobsStorage'
           value: 'DefaultEndpointsProtocol=https;AccountName=${strName};AccountKey=${strKey};EndpointSuffix=core.windows.net'
-        }
-        {
-          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${strName};AccountKey=${strKey};EndpointSuffix=core.windows.net'
-        }
-        {
-          name: 'WEBSITE_CONTENTSHARE'
-          value: '${funcName}a8dd'
         }
       ]
     }
