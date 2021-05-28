@@ -17,6 +17,7 @@ resource search 'Microsoft.Search/searchServices@2020-08-01' = {
 resource speech 'Microsoft.CognitiveServices/accounts@2017-04-18' = {
   name: 'speech-${suffix}'
   kind: 'SpeechServices'
+  location: location
   sku: {
     name: 'S0'
   }
