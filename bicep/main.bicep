@@ -38,7 +38,6 @@ module servicebus 'modules/servicebus/bus.bicep' = {
 
 output strCnxString string = str.outputs.strCnxString
 output containerName string = str.outputs.containerName
-output functionId string = function.outputs.functionId
 output strName string = str.outputs.strName
 output storageId string = str.outputs.strId
 output suffix string = suffix
