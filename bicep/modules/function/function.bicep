@@ -83,3 +83,6 @@ resource func 'Microsoft.Web/sites@2018-11-01' = {
     serverFarmId: plan.id    
   }
 }
+
+
+output functionId string = func.id

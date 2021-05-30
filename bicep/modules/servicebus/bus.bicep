@@ -17,3 +17,12 @@ resource serviceBusTopic 'Microsoft.ServiceBus/namespaces/topics@2017-04-01' = {
   properties: {    
   }  
 }
+
+resource sendRight 'Microsoft.ServiceBus/namespaces/AuthorizationRules@2017-04-01' = {
+  name: '${busNamespace.name}/AzureFunctionSend'
+  properties: {
+    rights: [
+      'Send'
+    ]
+  }
+}
