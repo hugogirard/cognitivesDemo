@@ -28,5 +28,13 @@ module function 'modules/function/function.bicep' = {
   }
 }
 
+module servicebus 'modules/servicebus/bus.bicep' = {
+  name: 'servicebus'
+  params: {
+    locations: location
+    suffix: suffix
+  }
+}
+
 output strCnxString string = str.outputs.strCnxString
 output containerName string = str.outputs.containerName
