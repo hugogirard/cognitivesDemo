@@ -1,19 +1,20 @@
 ### Change for the name of your search service
-@searchServiceName = <searchServiceName>
+@searchServiceName = search-ih5nmzpzmdfxy
 
 ### Change for the api key of the search service
-@apiKey= <apiKey>
+@apiKey= 3424DEF123C766ADBAACFE804AA717BB
 
 ### Storage connection string
-@cnxStringStorage = <connectionString>
+@cnxStringStorage = DefaultEndpointsProtocol=https;AccountName=strih5nmzpzmdfxy;AccountKey=h276l33a1mQ9p3zYnSIuaCOM1tlR1ZKqhUuVpudh+vO1xZ+DE1yZD2RJ/h9MQLrKGsjWM3ClBCiFbfEBIammVA==;EndpointSuffix=core.windows.net
 
+# Datasource for resume in english
 POST https://{{searchServiceName}}.search.windows.net/datasources?api-version=2020-06-30
 Content-Type: application/json
 api-key: {{apiKey}}
 
 {
-    "name" : "resumesource",  
-    "description" : "Azure Storage with all resume.",  
+    "name" : "resumesource_eng",  
+    "description" : "Azure Storage with all resume in english.",  
     "type" : "azureblob",
     "credentials" :
     { "connectionString" :
@@ -22,22 +23,55 @@ api-key: {{apiKey}}
     "container" : { "name" : "resume" }    
 }
 
-PUT https://search-ih5nmzpzmdfxy.search.windows.net/skillsets/resumeskillset?api-version=2020-06-30
+POST https://{{searchServiceName}}.search.windows.net/datasources?api-version=2020-06-30
 Content-Type: application/json
-api-key: AE27C769D5A3A0AA6C866AFC9967F9DA
+api-key: {{apiKey}}
 
 {
-    "name" : "resumeskillset",
-    "description" : "Skillset to analyze the resume",   
+    "name" : "resumesource_fr",  
+    "description" : "Azure Storage with all resume in french.",  
+    "type" : "azureblob",
+    "credentials" :
+    { "connectionString" :
+      "{{cnxStringStorage}}"
+    },  
+    "container" : { "name" : "resumefr" }    
+}
+
+# English indexer
+PUT https://{{searchServiceName}}.search.windows.net/skillsets/resumeskillsetenglish?api-version=2020-06-30
+Content-Type: application/json
+api-key: {{apiKey}}
+
+{
+    "name" : "resumeskillsetenglish",
+    "description" : "Skillset to analyze the resume for english",   
     "skills": [
+        {
+            "@odata.type": "#Microsoft.Skills.Text.LanguageDetectionSkill",
+            "description": "Detect language of the document",
+            "inputs": [
+              {
+                "name": "text", "source": "/document/content"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "languageCode",
+                "targetName": "languageCode"
+              }
+            ]            
+        },      
         {
             "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
             "description": "Recognize entity location and organization",
             "context": "/document/content",
-            "minimumPrecision": "0.8",
+            "minimumPrecision": 0.7,
             "categories": [
                 "Organization",
-                "Location"
+                "Location",
+                "Person",
+                "Email"
             ],
             "defaultLanguageCode": "en",
             "inputs": [
@@ -48,7 +82,7 @@ api-key: AE27C769D5A3A0AA6C866AFC9967F9DA
                 {
                     "name": "languageCode",
                     "source": "/document/language"
-                }                
+                }            
             ],
             "outputs": [
                 {
@@ -58,16 +92,135 @@ api-key: AE27C769D5A3A0AA6C866AFC9967F9DA
                 {
                     "name": "locations",
                     "targetName": "locations"
-                }           
+                },
+                {
+                    "name": "persons",
+                    "targetName": "persons"
+                },
+                {
+                    "name": "emails",
+                    "targetName": "emails"
+                }     
             ]
+        },
+        {
+            "@odata.type": "#Microsoft.Skills.Text.KeyPhraseExtractionSkill",
+            "description": "Key phrase of the document",
+            "maxKeyPhraseCount": "10",
+            "inputs": [
+              {
+                "name": "text",
+                "source": "/document/content"
+              },
+              {
+                "name": "languageCode",
+                "source": "/document/language" 
+              }
+            ],
+            "outputs": [
+              {
+                "name": "keyPhrases",
+                "targetName": "keyPhrases"
+              }
+            ]                        
         }
     ]
 }
 
+# French indexer
 
-PUT https://search-ih5nmzpzmdfxy.search.windows.net/indexes/resumeindex?api-version=2020-06-30
+PUT https://{{searchServiceName}}.search.windows.net/skillsets/resumeskillsetfrench?api-version=2020-06-30
 Content-Type: application/json
-api-key: AE27C769D5A3A0AA6C866AFC9967F9DA
+api-key: {{apiKey}}
+
+{
+    "name" : "resumeskillsetfrench",
+    "description" : "Skillset to analyze the resume for french",   
+    "skills": [
+        {
+            "@odata.type": "#Microsoft.Skills.Text.LanguageDetectionSkill",
+            "description": "Detect language of the document",
+            "inputs": [
+              {
+                "name": "text", "source": "/document/content"
+              }
+            ],
+            "outputs": [
+              {
+                "name": "languageCode",
+                "targetName": "languageCode"
+              }
+            ]            
+        },      
+        {
+            "@odata.type": "#Microsoft.Skills.Text.EntityRecognitionSkill",
+            "description": "Recognize entity location and organization",
+            "context": "/document/content",
+            "minimumPrecision": 0.7,
+            "categories": [
+                "Organization",
+                "Location",
+                "Person",
+                "Email"
+            ],
+            "defaultLanguageCode": "fr",
+            "inputs": [
+                {
+                    "name": "text",
+                    "source": "/document/content"
+                },
+                {
+                    "name": "languageCode",
+                    "source": "/document/language"
+                }            
+            ],
+            "outputs": [
+                {
+                    "name": "organizations",
+                    "targetName": "organizations"
+                },
+                {
+                    "name": "locations",
+                    "targetName": "locations"
+                },
+                {
+                    "name": "persons",
+                    "targetName": "persons"
+                },
+                {
+                    "name": "emails",
+                    "targetName": "emails"
+                }     
+            ]
+        },
+        {
+            "@odata.type": "#Microsoft.Skills.Text.KeyPhraseExtractionSkill",
+            "description": "Key phrase of the document",
+            "maxKeyPhraseCount": "10",
+            "defaultLanguageCode": "fr",
+            "inputs": [
+              {
+                "name": "text",
+                "source": "/document/content"
+              },
+              {
+                "name": "languageCode",
+                "source": "/document/language" 
+              }
+            ],
+            "outputs": [
+              {
+                "name": "keyPhrases",
+                "targetName": "keyPhrases"
+              }
+            ]                        
+        }
+    ]
+}
+
+PUT https://{{searchServiceName}}.search.windows.net/indexes/resumeindex?api-version=2020-06-30
+Content-Type: application/json
+api-key: {{apiKey}}
 
 {
   "fields": [
@@ -82,15 +235,33 @@ api-key: AE27C769D5A3A0AA6C866AFC9967F9DA
       "retrievable": true
     },
     {
+      "name": "blob_uri",
+      "type": "Edm.String",
+      "searchable": true,
+      "filterable": false,
+      "facetable": false,
+      "sortable": true
+    },    
+    {
       "name": "content",
       "type": "Edm.String",
       "sortable": false,
       "searchable": true,
       "filterable": false,
       "facetable": false,
-      "analyzer": "standard.lucene",      
+      "analyzer": "en.microsoft",      
       "retrievable": true
     },   
+    {
+      "name": "content_fr",
+      "type": "Edm.String",
+      "sortable": false,
+      "searchable": true,
+      "filterable": false,
+      "facetable": false,
+      "analyzer": "fr.microsoft",      
+      "retrievable": true
+    },       
     {
       "name": "metadata_title",
       "type": "Edm.String",
@@ -107,8 +278,35 @@ api-key: AE27C769D5A3A0AA6C866AFC9967F9DA
       "filterable": true,
       "facetable": true,
       "retrievable": true,
-      "analyzer": "standard.lucene"
+      "analyzer": "en.microsoft"
     },
+    {
+      "name": "organizations_fr",
+      "type": "Collection(Edm.String)",
+      "searchable": true,
+      "filterable": true,
+      "facetable": true,
+      "retrievable": true,
+      "analyzer": "fr.microsoft"
+    },    
+    {
+      "name": "keyPhrases",
+      "type": "Collection(Edm.String)",
+      "searchable": true,
+      "filterable": true,
+      "facetable": true,
+      "retrievable": true,
+      "analyzer": "en.microsoft"
+    }, 
+    {
+      "name": "keyPhrases_fr",
+      "type": "Collection(Edm.String)",
+      "searchable": true,
+      "filterable": true,
+      "facetable": true,
+      "retrievable": true,
+      "analyzer": "fr.microsoft"
+    },           
     {
       "name": "locations",
       "type": "Collection(Edm.String)",
@@ -116,18 +314,54 @@ api-key: AE27C769D5A3A0AA6C866AFC9967F9DA
       "filterable": true,
       "facetable": true,
       "retrievable": true,
-      "analyzer": "standard.lucene"
+      "analyzer": "en.microsoft"
     },    
     {
-      "name": "language",
+      "name": "locations_fr",
+      "type": "Collection(Edm.String)",
+      "searchable": true,
+      "filterable": true,
+      "facetable": true,
+      "retrievable": true,
+      "analyzer": "fr.microsoft"
+    },        
+    {
+      "name": "persons",
+      "type": "Collection(Edm.String)",
+      "searchable": true,
+      "filterable": true,
+      "facetable": true,
+      "retrievable": true,
+      "analyzer": "en.microsoft"
+    },      
+    {
+      "name": "persons_fr",
+      "type": "Collection(Edm.String)",
+      "searchable": true,
+      "filterable": true,
+      "facetable": true,
+      "retrievable": true,
+      "analyzer": "fr.microsoft"
+    },        
+    {
+      "name": "emails",
+      "type": "Collection(Edm.String)",
+      "searchable": true,
+      "filterable": true,
+      "facetable": true,
+      "retrievable": true,
+      "analyzer": "standard.lucene"
+    },        
+    {
+      "name": "languageCode",
       "type": "Edm.String",
-      "facetable": false,
+      "facetable": true,
       "filterable": true,
       "key": false,
       "retrievable": true,
       "searchable": true,
       "sortable": false,
-      "analyzer": "standard.lucene"
+      "analyzer": "standard.lucene"      
     },
     {
       "name": "metadata_creation_date",
@@ -137,13 +371,28 @@ api-key: AE27C769D5A3A0AA6C866AFC9967F9DA
       "retrievable": true,
       "sortable": false,      
       "searchable": false
-    }    
+    },
+    {
+      "name": "metadata_storage_file_extension",
+      "type": "Edm.String",
+      "facetable": false,
+      "filterable": false,
+      "key": false,
+      "retrievable": true,
+      "searchable": false,
+      "sortable": false,
+      "analyzer": null,
+      "indexAnalyzer": null,
+      "searchAnalyzer": null,
+      "synonymMaps": [],
+      "fields": []
+    } 
   ]
 }
 
-PUT https://search-ih5nmzpzmdfxy.search.windows.net/indexers/resumerindexer?api-version=2020-06-30
+PUT https://{{searchServiceName}}.search.windows.net/indexers/resumerindexer?api-version=2020-06-30
 Content-Type: application/json
-api-key: AE27C769D5A3A0AA6C866AFC9967F9DA
+api-key: {{apiKey}}
 
 {
   "dataSourceName" : "resumesource",
@@ -155,7 +404,11 @@ api-key: AE27C769D5A3A0AA6C866AFC9967F9DA
           "targetFieldName" : "metadata_storage_path",
           "mappingFunction" :
             { "name" : "base64Encode" }
-        }
+        },
+        {
+          "sourceFieldName" : "metadata_storage_path",
+          "targetFieldName" : "blob_uri"
+        }        
    ],
   "outputFieldMappings" :
   [
@@ -168,13 +421,29 @@ api-key: AE27C769D5A3A0AA6C866AFC9967F9DA
         "targetFieldName": "locations"
       },
       {
-        "sourceFieldName": "/document/language",
-        "targetFieldName": "language"
-      }
+        "sourceFieldName": "/document/content/persons",
+        "targetFieldName": "persons"
+      },      
+      {
+        "sourceFieldName": "/document/content/emails",
+        "targetFieldName": "emails"
+      },      
+      {
+        "sourceFieldName": "/document/languageCode",
+        "targetFieldName": "languageCode"
+      },
+      {
+        "sourceFieldName": "/document/keyPhrases",
+        "targetFieldName": "keyPhrases"        
+      }      
   ],
   "parameters":
   {
     "maxFailedItems":-1,
-    "maxFailedItemsPerBatch":-1
+    "maxFailedItemsPerBatch":-1,
+    "configuration": {
+      "dataToExtract": "contentAndMetadata",
+      "parsingMode": "default"      
+    }
   }
 }

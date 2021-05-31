@@ -5,7 +5,6 @@ var name = 'str${suffix}'
 var nameStrFunc = 'strf${suffix}'
 var containerName = 'resume'
 var containerFrName = 'resumefr'
-var containerEnglish = 'resumeeng'
 
 resource str 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: name
@@ -22,10 +21,6 @@ resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@20
 
 resource containerFr 'Microsoft.Storage/storageAccounts/blobServices/containers@2019-06-01' = {
   name: '${str.name}/default/${containerFrName}'
-}
-
-resource containerEng 'Microsoft.Storage/storageAccounts/blobServices/containers@2019-06-01' = {
-  name: '${str.name}/default/${containerEnglish}'
 }
 
 output strCnxString string = listKeys(str.id,'2019-04-01').keys[0].value
