@@ -1,11 +1,11 @@
 ### Change for the name of your search service
-@searchServiceName = search-ih5nmzpzmdfxy
+@searchServiceName = 
 
 ### Change for the api key of the search service
-@apiKey= 3424DEF123C766ADBAACFE804AA717BB
+@apiKey= 
 
 ### Storage connection string
-@cnxStringStorage = DefaultEndpointsProtocol=https;AccountName=strih5nmzpzmdfxy;AccountKey=h276l33a1mQ9p3zYnSIuaCOM1tlR1ZKqhUuVpudh+vO1xZ+DE1yZD2RJ/h9MQLrKGsjWM3ClBCiFbfEBIammVA==;EndpointSuffix=core.windows.net
+@cnxStringStorage = 
 
 # Datasource for resume in english
 POST https://{{searchServiceName}}.search.windows.net/datasources?api-version=2020-06-30
@@ -13,7 +13,7 @@ Content-Type: application/json
 api-key: {{apiKey}}
 
 {
-    "name" : "resumesource_eng",  
+    "name" : "resumesourceeng",  
     "description" : "Azure Storage with all resume in english.",  
     "type" : "azureblob",
     "credentials" :
@@ -28,7 +28,7 @@ Content-Type: application/json
 api-key: {{apiKey}}
 
 {
-    "name" : "resumesource_fr",  
+    "name" : "resumesourcefr",  
     "description" : "Azure Storage with all resume in french.",  
     "type" : "azureblob",
     "credentials" :
@@ -390,14 +390,15 @@ api-key: {{apiKey}}
   ]
 }
 
-PUT https://{{searchServiceName}}.search.windows.net/indexers/resumerindexer?api-version=2020-06-30
+# English datasource
+PUT https://{{searchServiceName}}.search.windows.net/indexers/resumerindexereng?api-version=2020-06-30
 Content-Type: application/json
 api-key: {{apiKey}}
 
 {
-  "dataSourceName" : "resumesource",
+  "dataSourceName" : "resumesourceeng",
   "targetIndexName" : "resumeindex",
-  "skillsetName" : "resumeskillset",
+  "skillsetName" : "resumeskillsetenglish",
   "fieldMappings" : [
         {
           "sourceFieldName" : "metadata_storage_path",
@@ -435,6 +436,69 @@ api-key: {{apiKey}}
       {
         "sourceFieldName": "/document/keyPhrases",
         "targetFieldName": "keyPhrases"        
+      }      
+  ],
+  "parameters":
+  {
+    "maxFailedItems":-1,
+    "maxFailedItemsPerBatch":-1,
+    "configuration": {
+      "dataToExtract": "contentAndMetadata",
+      "parsingMode": "default"      
+    }
+  }
+}
+
+# French indexer
+PUT https://{{searchServiceName}}.search.windows.net/indexers/resumerindexerfr?api-version=2020-06-30
+Content-Type: application/json
+api-key: {{apiKey}}
+
+{
+  "dataSourceName" : "resumesourcefr",
+  "targetIndexName" : "resumeindex",
+  "skillsetName" : "resumeskillsetfrench",
+  "fieldMappings" : [
+        {
+          "sourceFieldName" : "metadata_storage_path",
+          "targetFieldName" : "metadata_storage_path",
+          "mappingFunction" :
+            { "name" : "base64Encode" }
+        },
+        {
+          "sourceFieldName" : "metadata_storage_path",
+          "targetFieldName" : "blob_uri"
+        }        
+   ],
+  "outputFieldMappings" :
+  [
+      {
+        "sourceFieldName": "/document/content/organizations",
+        "targetFieldName": "organizations_fr"
+      },
+      {
+        "sourceFieldName": "/document/content",
+        "targetFieldName": "content_fr"
+      },      
+      {
+        "sourceFieldName": "/document/content/locations",
+        "targetFieldName": "locations_fr"
+      },
+      {
+        "sourceFieldName": "/document/content/persons",
+        "targetFieldName": "persons_fr"
+      },      
+      {
+        "sourceFieldName": "/document/content/emails",
+        "targetFieldName": "emails"
+      },      
+      {
+        "sourceFieldName": "/document/languageCode",
+        "targetFieldName": "languageCode"
+      },
+      {
+        "sourceFieldName": "/document/keyPhrases",
+        "targetFieldName": "keyPhrases_fr"        
       }      
   ],
   "parameters":
