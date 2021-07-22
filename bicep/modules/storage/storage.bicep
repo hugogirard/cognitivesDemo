@@ -21,7 +21,7 @@ resource containerFr 'Microsoft.Storage/storageAccounts/blobServices/containers@
   name: '${str.name}/default/${containerFrName}'
 }
 
-output strCnxString string = listKeys(str.id,'2019-04-01').keys[0].value
+output strCnxString string = 'DefaultEndpointsProtocol=https;AccountName=${str.name};AccountKey=${listKeys(str.id,'2019-04-01').keys[0].value};EndpointSuffix=core.windows.net'
 output strName string = str.name
 output strId string = str.id
 output containerEnglish string = containerEngName
