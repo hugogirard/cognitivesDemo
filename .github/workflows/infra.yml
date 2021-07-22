@@ -109,5 +109,5 @@ jobs:
       - name: Run Script Configuration
         working-directory: ./scripts
         run: |
-          chmox +x configuration.sh
+          chmod +x configuration.sh
           configuration.sh ${{ secrets.SEARCH_SERVICE_NAME }} ${{ secrets.SEARCH_ADMIN_KEY }} ${{ secrets.STORAGE_CNX_STRING }}
