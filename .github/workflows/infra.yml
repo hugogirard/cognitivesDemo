@@ -50,11 +50,11 @@ jobs:
           parameters: location=${{ env.LOCATION }}        
           deploymentMode: Incremental
 
-      - uses: gliech/create-github-secret-action@v1
-        with:
-          name: STORAGE_CNX_STRING
-          value: ${{ steps.deploy.outputs.strCnxString }}
-          pa_token: ${{ secrets.PA_TOKEN }}   
+      # - uses: gliech/create-github-secret-action@v1
+      #   with:
+      #     name: STORAGE_CNX_STRING
+      #     value: ${{ steps.deploy.outputs.strCnxString }}
+      #     pa_token: ${{ secrets.PA_TOKEN }}   
                     
       - uses: gliech/create-github-secret-action@v1
         with:
