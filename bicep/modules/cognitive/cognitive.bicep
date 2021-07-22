@@ -23,5 +23,6 @@ resource cognitiveService 'Microsoft.CognitiveServices/accounts@2017-04-18' = {
   kind: 'CognitiveServices'
 }
 
+output searchServiceName string = search.name
 output searchApiKey string = listAdminKeys(search.name,'2021-04-01-preview').primaryKey
 output cognitiveApiKey string = listKeys(cognitiveService.name,'2021-04-30').key1

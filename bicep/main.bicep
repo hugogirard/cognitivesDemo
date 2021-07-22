@@ -19,6 +19,7 @@ module cognitive 'modules/cognitive/cognitive.bicep' = {
 }
 
 
+output searchServiceName string = cognitive.outputs.searchServiceName
 output strCnxString string = str.outputs.strCnxString
 output strName string = str.outputs.strName
 output containerFrench string = str.outputs.containerFrench

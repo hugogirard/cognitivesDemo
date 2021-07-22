@@ -4,7 +4,7 @@
     "type" : "azureblob",
     "credentials" :
     { "connectionString" :
-      "{{cnxStringStorage}}"
+      "__cnxStringStorage__"
     },  
     "container" : { "name" : "resume" }    
 }

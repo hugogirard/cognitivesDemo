@@ -53,17 +53,11 @@ jobs:
           name: STORAGE_CNX_STRING
           value: ${{ steps.deploy.outputs.strCnxString }}
           pa_token: ${{ secrets.PA_TOKEN }}   
-          
+                    
       - uses: gliech/create-github-secret-action@v1
         with:
-          name: STORAGE_CNX_STRING
-          value: ${{ steps.deploy.outputs.strCnxString }}
-          pa_token: ${{ secrets.PA_TOKEN }}          
-          
-      - uses: gliech/create-github-secret-action@v1
-        with:
-          name: STORAGE_CNX_STRING
-          value: ${{ steps.deploy.outputs.strCnxString }}
+          name: SEARCH_SERVICE_NAME
+          value: ${{ steps.deploy.outputs.searchServiceName }}
           pa_token: ${{ secrets.PA_TOKEN }}          
           
       - uses: gliech/create-github-secret-action@v1
@@ -95,3 +89,25 @@ jobs:
           name: COGNITIVE_SERVICE_KEY
           value: ${{ steps.deploy.outputs.cognitiveServiceKey }}
           pa_token: ${{ secrets.PA_TOKEN }}
+
+  configure_search_services:
+    needs: deploy_azure_resources
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Replace tokens
+        uses: cschleiden/replace-tokens@v1.0
+        with:        
+          tokenPrefix: __
+          tokenSuffix: __        
+          files: '["./scripts/datasource.json"]'
+        env:
+          cnxStringStorage: ${{ secrets.STORAGE_CNX_STRING }}  
+
+      - name: Run Script Configuration
+        working-directory: ./scripts
+        run: |
+          chmox +x configuration.sh
+          configuration.sh ${{ secrets.SEARCH_SERVICE_NAME }} ${{ secrets.SEARCH_ADMIN_KEY }} ${{ secrets.STORAGE_CNX_STRING }}
