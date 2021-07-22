@@ -99,6 +99,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Azure Login
+        uses: Azure/login@v1.1
+        with:          
+          creds: ${{ secrets.SP_AZURE_CREDENTIALS }}          
+          enable-AzPSSession: true
+
       - name: Replace tokens
         uses: cschleiden/replace-tokens@v1.0
         with:        
@@ -109,7 +115,7 @@ jobs:
           cnxStringStorage: ${{ secrets.STORAGE_CNX_STRING }}  
 
       - name: Run Script Configuration
-        working-directory: ./scripts
-        run: |
-          chmod +x configuration.sh
-          ./configuration.sh ${{ secrets.SEARCH_SERVICE_NAME }} ${{ secrets.SEARCH_ADMIN_KEY }} ${{ secrets.STORAGE_CNX_STRING }}
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            .\configuration.ps1 -searchServiceName ${{ secrets.SEARCH_SERVICE_NAME }} -apiKey ${{ secrets.SEARCH_ADMIN_KEY }}
