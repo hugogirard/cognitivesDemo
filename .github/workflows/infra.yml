@@ -106,9 +106,10 @@ jobs:
           tokenSuffix: __        
           files: '["scripts/datasource.json"]'
         env:
-          cnxStringStorage: replace
+          cnxStringStorage: ${{ secrets.STORAGE_CNX_STRING }}  
 
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          path: "scripts/datasource.json"          
+      - name: Run Script Configuration
+        shell: powershell
+        working-directory: scripts
+        run: |
+          .\configuration.ps1 -searchServiceName ${{ secrets.SEARCH_SERVICE_NAME }} -apiKey ${{ secrets.SEARCH_ADMIN_KEY }}
