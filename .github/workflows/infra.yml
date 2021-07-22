@@ -29,9 +29,9 @@ jobs:
           enable-AzPSSession: false
       
       - name: Bicep Build
-        uses: aliencube/bicep-build-actions@v0.1
-        with:
-          files: bicep/main.bicep
+        working-directory: ./bicep
+        run: |
+          bicep build main.bicep
 
       # Create resource group
       - name: Create Resource Group
@@ -112,4 +112,4 @@ jobs:
         working-directory: ./scripts
         run: |
           chmod +x configuration.sh
-          configuration.sh ${{ secrets.SEARCH_SERVICE_NAME }} ${{ secrets.SEARCH_ADMIN_KEY }} ${{ secrets.STORAGE_CNX_STRING }}
+          ./configuration.sh ${{ secrets.SEARCH_SERVICE_NAME }} ${{ secrets.SEARCH_ADMIN_KEY }} ${{ secrets.STORAGE_CNX_STRING }}
