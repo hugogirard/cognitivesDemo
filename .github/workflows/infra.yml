@@ -104,7 +104,7 @@ jobs:
         with:        
           tokenPrefix: __
           tokenSuffix: __        
-          files: '["./scripts/datasource.json"]'
+          files: '["scripts/datasource.json"]'
         env:
           cnxStringStorage: ${{ secrets.STORAGE_CNX_STRING }}  
 
