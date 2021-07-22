@@ -115,7 +115,8 @@ jobs:
           cnxStringStorage: ${{ secrets.STORAGE_CNX_STRING }}  
 
       - name: Run Script Configuration
-        uses: azure/powershell@v1
+        uses: azure/powershell@v1        
         with:
+          azPSVersion: latest
           inlineScript: |
             .\configuration.ps1 -searchServiceName ${{ secrets.SEARCH_SERVICE_NAME }} -apiKey ${{ secrets.SEARCH_ADMIN_KEY }}
