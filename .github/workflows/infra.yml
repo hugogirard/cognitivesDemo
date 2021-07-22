@@ -110,5 +110,6 @@ jobs:
 
       - name: Run Script Configuration
         shell: powershell
+        working-directory: scripts
         run: |
           .\configuration.ps1 -searchServiceName ${{ secrets.SEARCH_SERVICE_NAME }} -apiKey ${{ secrets.SEARCH_ADMIN_KEY }}
