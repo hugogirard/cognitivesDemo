@@ -6,6 +6,8 @@ on:
       - "main"
     paths:
       - "bicep/**"
+      - ".github/workflows/infra.yml"
+      - "scripts/*"
 
   workflow_dispatch:
 
