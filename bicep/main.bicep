@@ -23,4 +23,6 @@ output strCnxString string = str.outputs.strCnxString
 output strName string = str.outputs.strName
 output containerFrench string = str.outputs.containerFrench
 output containerEnglish string = str.outputs.containerEnglish
+output searchServiceAdminKey string = cognitive.outputs.searchApiKey
+output cognitiveServiceKey string = cognitive.outputs.cognitiveApiKey
 

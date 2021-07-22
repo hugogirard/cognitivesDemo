@@ -82,4 +82,16 @@ jobs:
         with:
           name: CONTAINER_NAME_ENGLISH
           value: ${{ steps.deploy.outputs.containerEnglish }}
-          pa_token: ${{ secrets.PA_TOKEN }}            
+          pa_token: ${{ secrets.PA_TOKEN }}        
+
+      - uses: gliech/create-github-secret-action@v1
+        with:
+          name: SEARCH_ADMIN_KEY
+          value: ${{ steps.deploy.outputs.searchServiceAdminKey }}
+          pa_token: ${{ secrets.PA_TOKEN }}
+
+      - uses: gliech/create-github-secret-action@v1
+        with:
+          name: COGNITIVE_SERVICE_KEY
+          value: ${{ steps.deploy.outputs.cognitiveServiceKey }}
+          pa_token: ${{ secrets.PA_TOKEN }}
