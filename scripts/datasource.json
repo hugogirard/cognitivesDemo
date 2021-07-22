@@ -1,0 +1,10 @@
+{
+    "name" : "resumesource",  
+    "description" : "Azure Storage with all resume.",  
+    "type" : "azureblob",
+    "credentials" :
+    { "connectionString" :
+      "{{cnxStringStorage}}"
+    },  
+    "container" : { "name" : "resume" }    
+}

@@ -1,0 +1,8 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "ServiceBusConnection": "Endpoint=sb://srvbus-ih5nmzpzmdfxy.servicebus.windows.net/;SharedAccessKeyName=AzureFunctionSend;SharedAccessKey=R0pnrBCU7RSj2JTjbE776jbz2eYYMA9KJHkHmuNxs60="
+  }
+}

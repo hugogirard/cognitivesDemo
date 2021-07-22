@@ -2,8 +2,7 @@ param location string
 param suffix string
 
 var name = 'str${suffix}'
-var nameStrFunc = 'strf${suffix}'
-var containerName = 'resume'
+var containerEngName = 'resume'
 var containerFrName = 'resumefr'
 
 resource str 'Microsoft.Storage/storageAccounts@2021-02-01' = {
@@ -11,12 +10,11 @@ resource str 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   location: location
   sku: {
     name: 'Standard_LRS'
-    tier: 'Standard'
   }
   kind: 'StorageV2'
 }
 resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2019-06-01' = {
-  name: '${str.name}/default/${containerName}'
+  name: '${str.name}/default/${containerEngName}'
 }
 
 resource containerFr 'Microsoft.Storage/storageAccounts/blobServices/containers@2019-06-01' = {
@@ -26,4 +24,5 @@ resource containerFr 'Microsoft.Storage/storageAccounts/blobServices/containers@
 output strCnxString string = listKeys(str.id,'2019-04-01').keys[0].value
 output strName string = str.name
 output strId string = str.id
-output containerName string = containerName
+output containerEnglish string = containerEngName
+output containerFrench string = containerFrName
